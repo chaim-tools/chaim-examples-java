@@ -1,0 +1,21 @@
+{
+  "version": "48.0.0",
+  "files": {
+    "d4b71e9b66d07eca4ff3fd52f7c55859f86ea88f38fbc9cdd0aaa962dc758110": {
+      "displayName": "OrdersStack Template",
+      "source": {
+        "path": "OrdersStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "637224115093-us-east-1-a0972e0f": {
+          "bucketName": "cdk-hnb659fds-assets-637224115093-us-east-1",
+          "objectKey": "d4b71e9b66d07eca4ff3fd52f7c55859f86ea88f38fbc9cdd0aaa962dc758110.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::637224115093:role/cdk-hnb659fds-file-publishing-role-637224115093-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

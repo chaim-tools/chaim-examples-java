@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "v1",
+  "namespace": "acme.orders",
+  "description": "Basic order management system for ACME Corporation",
+  "entity": {
+    "primaryKey": { "partitionKey": "orderId" },
+    "fields": [
+      { "name": "orderId", "type": "string", "required": true },
+      { "name": "customerId", "type": "string", "required": true },
+      { "name": "amount", "type": "number", "required": true },
+      { "name": "currency", "type": "string", "required": false }
+    ]
+  }
+}

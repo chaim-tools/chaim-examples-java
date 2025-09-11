@@ -1,0 +1,44 @@
+{
+  "name": "chaim-examples-java",
+  "version": "1.0.0",
+  "description": "Chaim examples demonstrating complete workflow with orders management",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "cdk deploy",
+    "synth": "cdk synth",
+    "destroy": "cdk destroy",
+    "test": "./scripts/test-end-to-end.sh",
+    "generate-sdk": "./scripts/generate-sdk.sh",
+    "test:local": "node test-api.js",
+    "test:client": "node test-client.js"
+  },
+  "keywords": [
+    "chaim",
+    "aws",
+    "cdk",
+    "java",
+    "sdk",
+    "orders",
+    "example"
+  ],
+  "author": "Chaim Builder Team",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "aws-cdk-lib": "^2.100.0",
+    "chaim-cdk": "file:../chaim-cdk",
+    "constructs": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.13",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  },
+  "optionalDependencies": {
+    "express": "^5.1.0",
+    "cors": "^2.8.5",
+    "uuid": "^13.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

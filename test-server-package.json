@@ -1,0 +1,24 @@
+{
+  "name": "orders-api-test-server",
+  "version": "1.0.0",
+  "description": "Local test server for Orders API",
+  "main": "test-api.js",
+  "scripts": {
+    "start": "node test-api.js",
+    "test": "node test-client.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "uuid": "^9.0.0"
+  },
+  "keywords": [
+    "api",
+    "orders",
+    "test",
+    "express"
+  ],
+  "author": "Chaim Builder Team",
+  "license": "MIT"
+}
+

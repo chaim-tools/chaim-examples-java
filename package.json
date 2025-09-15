@@ -9,8 +9,13 @@
     "destroy": "cdk destroy",
     "test": "./scripts/test-end-to-end.sh",
     "generate-sdk": "./scripts/generate-sdk.sh",
+    "generate-sdk:dev": "./scripts/generate-sdk-dev.sh",
     "test:local": "node test-api.js",
-    "test:client": "node test-client.js"
+    "test:client": "node test-client.js",
+    "chaim": "npx @chaim/cli",
+    "chaim:dev": "node ../chaim-cli/cli/dist/index.js",
+    "validate": "npx @chaim/cli validate schemas/orders.bprint",
+    "validate:dev": "node ../chaim-cli/cli/dist/index.js validate schemas/orders.bprint"
   },
   "keywords": [
     "chaim",

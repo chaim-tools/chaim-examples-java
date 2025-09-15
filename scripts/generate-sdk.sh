@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Generate Java SDK script for Chaim examples
-# This script demonstrates how to generate Java SDKs from deployed stacks
+# Generate Java SDK script for PRODUCTION/USERS
+# This script uses the published @chaim/cli package
+# Following industry best practices from Create React App, Next.js, Vue CLI
 
 set -e
 
@@ -13,11 +14,11 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-STACK_NAME=${1:-"OrdersStack"}
+STACK_NAME=${1:-"OrdersInfrastructureStack"}
 OUTPUT_DIR=${2:-"generated-sdks"}
 NAMESPACE=${3:-"com.example"}
 
-echo -e "${BLUE}🔧 Generating Java SDK from Chaim Stack${NC}"
+echo -e "${BLUE}🔧 Generating Java SDK from Infrastructure Stack${NC}"
 echo -e "${BLUE}Stack: ${STACK_NAME}${NC}"
 echo -e "${BLUE}Output Directory: ${OUTPUT_DIR}${NC}"
 echo -e "${BLUE}Namespace: ${NAMESPACE}${NC}"
@@ -26,9 +27,11 @@ echo ""
 # Check prerequisites
 echo -e "${YELLOW}📋 Checking prerequisites...${NC}"
 
-if ! command -v chaim &> /dev/null; then
-    echo -e "${RED}❌ Chaim CLI not found. Please install chaim-cli${NC}"
-    echo -e "${YELLOW}You can install it from: https://github.com/chaim-builder/chaim-cli${NC}"
+# Check if chaim CLI is available (either globally or via npx)
+if ! command -v chaim &> /dev/null && ! npx @chaim/cli --version &> /dev/null; then
+    echo -e "${RED}❌ Chaim CLI not found. Please install it first:${NC}"
+    echo -e "${YELLOW}  npm install -g @chaim/cli${NC}"
+    echo -e "${YELLOW}  or use: npx @chaim/cli${NC}"
     exit 1
 fi
 
@@ -58,22 +61,28 @@ echo -e "${GREEN}✅ Stack found${NC}"
 echo -e "${YELLOW}📁 Creating output directory...${NC}"
 mkdir -p ${OUTPUT_DIR}
 
-# Generate Java SDK
-echo -e "${YELLOW}🔧 Generating Java SDK...${NC}"
+# Generate Java SDK using published CLI
+echo -e "${YELLOW}🔧 Generating Java SDK using published CLI...${NC}"
 cd "$(dirname "$0")/.."
 
-chaim generate java \
-    --stack-name ${STACK_NAME} \
-    --output-dir ${OUTPUT_DIR}/${STACK_NAME,,}-sdk \
-    --namespace ${NAMESPACE} \
-    --package-name ${STACK_NAME,,}-sdk \
-    --version 1.0.0
+# Use chaim if available globally, otherwise use npx
+if command -v chaim &> /dev/null; then
+    chaim generate \
+        --stack ${STACK_NAME} \
+        --package ${NAMESPACE}.orders \
+        --output ${OUTPUT_DIR}
+else
+    npx @chaim/cli generate \
+        --stack ${STACK_NAME} \
+        --package ${NAMESPACE}.orders \
+        --output ${OUTPUT_DIR}
+fi
 
 echo -e "${GREEN}✅ Java SDK generated successfully!${NC}"
 
 # Create a simple Maven project structure
 echo -e "${YELLOW}📦 Setting up Maven project structure...${NC}"
-SDK_DIR="${OUTPUT_DIR}/${STACK_NAME,,}-sdk"
+SDK_DIR="${OUTPUT_DIR}/ordersstack-sdk"
 
 # Create pom.xml
 cat > ${SDK_DIR}/pom.xml << EOF
@@ -85,12 +94,12 @@ cat > ${SDK_DIR}/pom.xml << EOF
     <modelVersion>4.0.0</modelVersion>
     
     <groupId>${NAMESPACE}</groupId>
-    <artifactId>${STACK_NAME,,}-sdk</artifactId>
+    <artifactId>ordersstack-sdk</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
     
-    <name>${STACK_NAME} SDK</name>
-    <description>Generated Java SDK for ${STACK_NAME}</description>
+    <name>Orders Stack SDK</name>
+    <description>Generated Java SDK for Orders Infrastructure Stack</description>
     
     <properties>
         <maven.compiler.source>11</maven.compiler.source>

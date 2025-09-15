@@ -4,7 +4,7 @@ import * as cdk from 'aws-cdk-lib';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 import * as iam from 'aws-cdk-lib/aws-iam';
-import { ChaimBinder } from '../../chaim-cdk/src/chaim-binder';
+import { ChaimBinder } from 'chaim-cdk';
 import * as path from 'path';
 
 export class OrdersInfrastructureStack extends cdk.Stack {
@@ -45,14 +45,12 @@ export class OrdersInfrastructureStack extends cdk.Stack {
     // Grant DynamoDB permissions to Lambda role
     this.orderTable.grantReadWriteData(this.lambdaExecutionRole);
 
-    // Load the orders schema and create ChaimBinder
+    // Load the orders schema for metadata
     const ordersSchema = path.join(__dirname, '../schemas/orders.bprint');
     
-    const chaimBinder = new ChaimBinder(this, 'OrderSchemaOSS', {
-      schemaPath: ordersSchema,
-      table: this.orderTable,
-      // No API credentials - OSS mode
-    });
+    // For now, we'll create outputs manually instead of using ChaimBinder
+    // This avoids the table validation timing issue during construction
+    // TODO: Fix ChaimBinder to handle table metadata extraction properly
 
     // Export values for application stack to use
     new cdk.CfnOutput(this, 'TableName', {
@@ -89,6 +87,19 @@ export class OrdersInfrastructureStack extends cdk.Stack {
       value: this.region,
       description: 'AWS region',
       exportName: `${this.stackName}-Region`,
+    });
+
+    // Schema metadata outputs for chaim-cli consumption
+    new cdk.CfnOutput(this, 'SchemaPath', {
+      value: ordersSchema,
+      description: 'Path to the orders schema file',
+      exportName: `${this.stackName}-SchemaPath`,
+    });
+
+    new cdk.CfnOutput(this, 'SchemaNamespace', {
+      value: 'acme.orders',
+      description: 'Schema namespace for orders',
+      exportName: `${this.stackName}-SchemaNamespace`,
     });
   }
 }

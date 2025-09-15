@@ -7,7 +7,7 @@
 
 const express = require('express');
 const cors = require('cors');
-const { v4: uuidv4 } = require('uuid');
+function uuidv4() { return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15); }
 
 const app = express();
 const PORT = 3000;

@@ -4,7 +4,8 @@ import * as cdk from 'aws-cdk-lib';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 import * as iam from 'aws-cdk-lib/aws-iam';
-import { ChaimBinder } from 'chaim-cdk';
+// import { ChaimDynamoDBBinder } from '@chaim-tools/cdk-lib';
+// Note: This stack uses manual outputs instead of ChaimBinder
 import * as path from 'path';
 
 export class OrdersInfrastructureStack extends cdk.Stack {

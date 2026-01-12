@@ -1,21 +1,26 @@
 {
   "name": "chaim-examples-java",
   "version": "1.0.0",
-  "description": "Chaim examples demonstrating complete workflow with orders management",
+  "description": "Complete Chaim OSS workflow example: schema → CDK → Java SDK → application",
   "main": "index.js",
   "scripts": {
-    "deploy": "cdk deploy",
     "synth": "cdk synth",
+    "synth:products": "cdk synth ProductCatalogStack",
+    "deploy": "cdk deploy",
+    "deploy:products": "cdk deploy ProductCatalogStack",
     "destroy": "cdk destroy",
+    "destroy:products": "cdk destroy ProductCatalogStack",
+    "list": "cdk list",
+    "diff": "cdk diff",
+    "workflow": "./scripts/synth-and-generate.sh",
+    "workflow:products": "./scripts/synth-and-generate.sh ProductCatalogStack com.acme.products",
+    "generate": "node ../chaim-cli/dist/index.js generate",
+    "generate:products": "node ../chaim-cli/dist/index.js generate --stack ProductCatalogStack --package com.acme.products --output ./generated-sdks",
+    "validate": "node ../chaim-cli/dist/index.js validate",
+    "validate:products": "node ../chaim-cli/dist/index.js validate schemas/product-catalog.bprint",
     "test": "./scripts/test-end-to-end.sh",
-    "generate-sdk": "./scripts/generate-sdk.sh",
-    "generate-sdk:dev": "./scripts/generate-sdk-dev.sh",
     "test:local": "node test-api.js",
-    "test:client": "node test-client.js",
-    "chaim": "npx @chaim/cli",
-    "chaim:dev": "node ../chaim-cli/cli/dist/index.js",
-    "validate": "npx @chaim/cli validate schemas/orders.bprint",
-    "validate:dev": "node ../chaim-cli/cli/dist/index.js validate schemas/orders.bprint"
+    "test:client": "node test-client.js"
   },
   "keywords": [
     "chaim",
@@ -23,15 +28,18 @@
     "cdk",
     "java",
     "sdk",
-    "orders",
+    "dynamodb",
+    "code-generation",
+    "schema-driven",
     "example"
   ],
   "author": "Chaim Builder Team",
   "license": "Apache-2.0",
   "dependencies": {
     "aws-cdk-lib": "^2.100.0",
-    "chaim-cdk": "file:../chaim-cdk",
-    "constructs": "^10.0.0"
+    "@chaim-tools/cdk-lib": "file:../chaim-cdk/packages/cdk-lib",
+    "constructs": "^10.0.0",
+    "source-map-support": "^0.5.21"
   },
   "devDependencies": {
     "@types/node": "^20.19.13",

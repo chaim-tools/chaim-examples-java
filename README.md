@@ -1,6 +1,6 @@
 # Chaim Examples Java
 
-**A complete, working example demonstrating the Chaim OSS ecosystem end-to-end.**
+**A complete, working example demonstrating the Chaim ecosystem end-to-end.**
 
 This repository shows how to use Chaim tools to:
 1. Define data schemas with `.bprint` files

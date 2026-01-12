@@ -1,6 +1,6 @@
 # AI Agent Context: chaim-examples-java
 
-**Purpose**: Structured context for AI agents to understand the complete Chaim OSS workflow through a working example.
+**Purpose**: Structured context for AI agents to understand the complete Chaim workflow through a working example.
 
 **Package**: `@chaim-tools/examples-java` (reference implementation, not published)  
 **Version**: 0.1.0  
@@ -10,7 +10,7 @@
 
 ## Project Overview
 
-This repository is a **complete, working reference implementation** demonstrating the entire Chaim OSS ecosystem end-to-end. It serves as both documentation and a template for users getting started with Chaim tools.
+This repository is a **complete, working reference implementation** demonstrating the entire Chaim ecosystem end-to-end. It serves as both documentation and a template for users getting started with Chaim tools.
 
 > **This is the "hello world" of Chaim** — everything from schema definition to running Java code that interacts with DynamoDB.
 

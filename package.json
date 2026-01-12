@@ -1,7 +1,7 @@
 {
   "name": "chaim-examples-java",
   "version": "1.0.0",
-  "description": "Complete Chaim OSS workflow example: schema → CDK → Java SDK → application",
+  "description": "Complete Chaim workflow example: schema → CDK → Java SDK → application",
   "main": "index.js",
   "scripts": {
     "synth": "cdk synth",

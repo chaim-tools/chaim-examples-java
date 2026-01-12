@@ -8,7 +8,7 @@ This repository shows how to use Chaim tools to:
 3. Generate type-safe Java SDKs from LOCAL snapshots
 4. Build applications using the generated code
 
-## 🎯 What This Example Demonstrates
+## What This Example Demonstrates
 ```mermaid
 flowchart LR
     A[Schema .bprint<br/>✓ Entity<br/>✓ Fields<br/>✓ Keys] --> B[CDK Stack TypeScript<br/>✓ DynamoDB<br/>✓ Binder<br/>✓ Metadata]
@@ -24,7 +24,7 @@ flowchart LR
 repository.save = product; // Type-safe DynamoDB operations</pre>]
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -54,20 +54,20 @@ cd java-applications/product-demo
 mvn compile exec:java -Dexec.mainClass="com.acme.demo.ProductCatalogDemo"
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 chaim-examples-java/
 ├── schemas/                          # .bprint schema definitions
-│   ├── product-catalog.bprint       # 📋 Product entity schema (PK + SK)
+│   ├── product-catalog.bprint       # Product entity schema (PK + SK)
 │   └── orders.bprint                 # Orders schema (legacy example)
 │
 ├── cdk-stacks/                       # AWS CDK infrastructure code
 │   ├── app.ts                        # CDK app entry point
-│   ├── product-catalog-stack.ts     # 🏗️ DynamoDB + ChaimDynamoDBBinder
+│   ├── product-catalog-stack.ts     # DynamoDB + ChaimDynamoDBBinder
 │   └── orders-*.ts                   # Legacy orders stacks
 │
-├── generated-sdks/                   # 📦 Generated Java SDKs (gitignored)
+├── generated-sdks/                   # Generated Java SDKs (gitignored)
 │   └── productcatalogstack-sdk/      # Output from chaim generate
 │       ├── src/main/java/
 │       │   └── com/acme/products/
@@ -83,14 +83,14 @@ chaim-examples-java/
 │       └── pom.xml
 │
 ├── java-applications/                # Example Java applications
-│   └── product-demo/                 # 🎯 Demo using generated SDK
+│   └── product-demo/                 # Demo using generated SDK
 │       ├── src/main/java/
 │       │   └── com/acme/demo/
 │       │       └── ProductCatalogDemo.java
 │       └── pom.xml
 │
 ├── scripts/                          # Automation scripts
-│   └── synth-and-generate.sh        # 🔧 Complete workflow script
+│   └── synth-and-generate.sh        # Complete workflow script
 │
 ├── templates/                        # Build templates
 │   └── sdk-pom.xml.template         # Maven POM template for SDK
@@ -99,7 +99,7 @@ chaim-examples-java/
 └── package.json                      # Node.js dependencies
 ```
 
-## 📋 The Schema (product-catalog.bprint)
+## The Schema (product-catalog.bprint)
 
 ```json
 {
@@ -125,7 +125,7 @@ chaim-examples-java/
 }
 ```
 
-## 🏗️ The CDK Stack (product-catalog-stack.ts)
+## The CDK Stack (product-catalog-stack.ts)
 
 ```typescript
 import { ChaimDynamoDBBinder, ChaimCredentials, FailureMode } from '@chaim-tools/cdk-lib';
@@ -151,7 +151,7 @@ new ChaimDynamoDBBinder(this, 'ProductSchema', {
 });
 ```
 
-## 📦 Generated Java SDK
+## Generated Java SDK
 
 After running `chaim generate`, you get:
 
@@ -209,7 +209,7 @@ public class ChaimConfig {
 }
 ```
 
-## 💻 Using the Generated SDK
+## Using the Generated SDK
 
 ```java
 // Get repository from generated config
@@ -236,7 +236,7 @@ Optional<Product> found = repository.findByKey("PROD-001", "Electronics");
 repository.deleteByKey("PROD-001", "Electronics");
 ```
 
-## 🔧 Step-by-Step Workflow
+## Step-by-Step Workflow
 
 ### Step 1: Define Your Schema
 
@@ -289,7 +289,7 @@ cd java-applications/product-demo
 mvn compile exec:java
 ```
 
-## 🔄 Development Workflow
+## Development Workflow
 
 ### Schema Changes
 
@@ -319,7 +319,7 @@ The LOCAL snapshot is written during `cdk synth`, which doesn't require AWS cred
 - CI/CD pipelines that generate code before deploy
 - Testing generated code before infrastructure exists
 
-## 📍 Key Locations
+## Key Locations
 
 | What | Where |
 |------|-------|
@@ -329,7 +329,7 @@ The LOCAL snapshot is written during `cdk synth`, which doesn't require AWS cred
 | Generated SDK | `generated-sdks/productcatalogstack-sdk/` |
 | Demo App | `java-applications/product-demo/` |
 
-## 🔗 Related Chaim Projects
+## Related Chaim Projects
 
 | Project | Purpose |
 |---------|---------|
@@ -338,7 +338,7 @@ The LOCAL snapshot is written during `cdk synth`, which doesn't require AWS cred
 | [chaim-cli](../chaim-cli) | Command-line tools (`chaim generate`, `chaim validate`) |
 | [chaim-client-java](../chaim-client-java) | Java code generator used by chaim-cli |
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### "No snapshot found"
 
@@ -361,6 +361,6 @@ Chaim requires a LOCAL snapshot from chaim-cdk.
 
 **Solution:** Deploy the stack first: `npx cdk deploy ProductCatalogStack`
 
-## 📄 License
+## License
 
 Apache-2.0 License - see [LICENSE](LICENSE) file for details.

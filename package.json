@@ -36,15 +36,19 @@
   "author": "Chaim Builder Team",
   "license": "Apache-2.0",
   "dependencies": {
-    "aws-cdk-lib": "^2.100.0",
+    "aws-cdk-lib": "^2.235.0",
     "@chaim-tools/cdk-lib": "file:../chaim-cdk/packages/cdk-lib",
-    "constructs": "^10.0.0",
+    "constructs": "^10.4.4",
     "source-map-support": "^0.5.21"
   },
   "devDependencies": {
     "@types/node": "^20.19.13",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
+  },
+  "resolutions": {
+    "constructs": "^10.4.4",
+    "aws-cdk-lib": "^2.235.0"
   },
   "optionalDependencies": {
     "express": "^5.1.0",

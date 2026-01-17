@@ -36,12 +36,24 @@ This repository is a **complete, working reference implementation** demonstratin
 
 ## Related Packages
 
-| Package | Relationship | Purpose |
-|---------|-------------|---------|
-| `@chaim-tools/chaim-bprint-spec` | **Schema format** | Defines `.bprint` file structure and validation |
-| `@chaim-tools/cdk-lib` | **Infrastructure** | CDK constructs that write LOCAL snapshots |
-| `@chaim-tools/chaim` (chaim-cli) | **Code generation** | Reads snapshots, generates Java SDK |
-| `@chaim-tools/client-java` | **Generator engine** | Internal dependency of chaim-cli |
+| Package | Version | Relationship | Purpose |
+|---------|---------|-------------|---------|
+| `@chaim-tools/chaim-bprint-spec` | v0.2.0 | **Schema format** | Defines `.bprint` file structure (flattened v1.0) and validation |
+| `@chaim-tools/cdk-lib` | v0.1.0 | **Infrastructure** | CDK constructs (`ChaimDynamoDBBinder` with `TableBindingConfig`) |
+| `@chaim-tools/chaim` (chaim-cli) | v0.1.0 | **Code generation** | Reads snapshots, generates Java SDK |
+| `@chaim-tools/client-java` | v0.1.0 | **Generator engine** | Internal dependency of chaim-cli |
+
+### Recent Changes (v0.2.0)
+
+**Schema Format (chaim-bprint-spec v0.2.0):**
+- ✅ Flattened structure: `entityName`, `primaryKey`, `fields` are now top-level
+- ✅ Field-level `constraints` for validation (minLength, maxLength, pattern, min, max)
+- ✅ Field-level `annotations` for custom metadata
+
+**CDK API (chaim-cdk v0.1.0):**
+- ✅ `TableBindingConfig` class for organizing appId, credentials, and failureMode
+- ✅ `ChaimDynamoDBBinder` now accepts `config` parameter instead of individual fields
+- ✅ Easier to share configuration across multiple entities (single-table design)
 
 ### Data Flow
 
@@ -107,31 +119,30 @@ flowchart LR
 ```
 chaim-examples-java/
 ├── schemas/                          # Step 1: .bprint schema definitions
-│   ├── product-catalog.bprint       # 📋 Primary example (composite key)
-│   └── orders.bprint                 # Legacy example (single key)
+│   ├── product-catalog.bprint       # 📋 Product entity (used in both examples)
+│   ├── customer.bprint               # Customer entity (single-table example)
+│   ├── orders.bprint                 # Orders entity (single-table example)
+│   └── order-item.bprint             # OrderItem entity (single-table example)
 │
 ├── cdk-stacks/                       # Step 2: AWS CDK infrastructure
 │   ├── app.ts                        # CDK app entry point
-│   ├── product-catalog-stack.ts     # 🏗️ ProductCatalogStack with ChaimDynamoDBBinder
-│   ├── orders-infrastructure-stack.ts
-│   └── orders-application-stack.ts
+│   ├── product-catalog-stack.ts     # 🏗️ Primary example: single entity
+│   └── single-table-example.ts      # Advanced: multiple entities, one table
 │
 ├── generated-sdks/                   # Step 4: Generated Java code (gitignored)
-│   ├── productcatalogstack-sdk/      # Output for ProductCatalogStack
-│   │   └── com/acme/products/
-│   │       ├── Products.java         # Entity DTO
-│   │       ├── config/ChaimConfig.java
-│   │       ├── client/ChaimDynamoDbClient.java
-│   │       ├── keys/ProductsKeys.java
-│   │       └── repository/ProductsRepository.java
-│   └── README.md                     # Explains gitignore strategy
+│   └── productcatalogstack-sdk/      # Output for ProductCatalogStack
+│       └── com/acme/products/
+│           ├── Product.java          # Entity DTO
+│           ├── config/ChaimConfig.java
+│           ├── client/ChaimDynamoDbClient.java
+│           ├── keys/ProductKeys.java
+│           └── repository/ProductRepository.java
 │
 ├── java-applications/                # Step 6: Example applications
-│   ├── product-demo/                 # 🎯 Primary demo using generated SDK
-│   │   ├── src/main/java/com/acme/demo/
-│   │   │   └── ProductCatalogDemo.java
-│   │   └── pom.xml
-│   └── orders-app/                   # Legacy orders demo
+│   └── product-demo/                 # 🎯 Demo using ProductCatalogStack SDK
+│       ├── src/main/java/com/acme/demo/
+│       │   └── ProductCatalogDemo.java
+│       └── pom.xml
 │
 ├── scripts/                          # Automation scripts
 │   ├── synth-and-generate.sh        # 🔧 Complete workflow: synth → generate → pom
@@ -156,28 +167,27 @@ chaim-examples-java/
 // schemas/product-catalog.bprint
 {
   "schemaVersion": 1.0,
-  "namespace": "acme.ecommerce.products",
-  "entity": {
-    "name": "Product",
-    "primaryKey": {
-      "partitionKey": "productId",
-      "sortKey": "category"
-    },
-    "fields": [
-      { "name": "productId", "type": "string", "required": true },
-      { "name": "category", "type": "string", "required": true },
-      { "name": "name", "type": "string", "required": true },
-      { "name": "price", "type": "number", "required": true },
-      { "name": "stockQuantity", "type": "number", "required": true },
-      { "name": "isActive", "type": "boolean", "default": true },
-      { "name": "createdAt", "type": "timestamp", "required": true }
-    ]
-  }
+  "entityName": "Product",
+  "description": "Product catalog for ACME E-Commerce platform",
+  "primaryKey": {
+    "partitionKey": "productId",
+    "sortKey": "category"
+  },
+  "fields": [
+    { "name": "productId", "type": "string", "required": true },
+    { "name": "category", "type": "string", "required": true },
+    { "name": "name", "type": "string", "required": true },
+    { "name": "price", "type": "number", "required": true },
+    { "name": "stockQuantity", "type": "number", "required": true },
+    { "name": "isActive", "type": "boolean", "default": true },
+    { "name": "createdAt", "type": "timestamp", "required": true }
+  ]
 }
 ```
 
 **Key points:**
 - `schemaVersion` must be a number (`1.0`), not string
+- **Flattened structure**: `entityName`, `primaryKey`, and `fields` are at the top level (not nested under `entity`)
 - `primaryKey.partitionKey` and `primaryKey.sortKey` reference field names
 - Fields with `required: true` generate validation in the SDK
 
@@ -185,30 +195,41 @@ chaim-examples-java/
 
 ```typescript
 // cdk-stacks/product-catalog-stack.ts
-import { ChaimDynamoDBBinder, ChaimCredentials, FailureMode } from '@chaim-tools/cdk-lib';
+import { 
+  ChaimDynamoDBBinder, 
+  ChaimCredentials, 
+  TableBindingConfig,
+  FailureMode 
+} from '@chaim-tools/cdk-lib';
 
 // Create table matching schema's key structure
 const productTable = new dynamodb.Table(this, 'ProductTable', {
-  tableName: 'product-catalog',
+  tableName: 'acme-product-catalog',
   partitionKey: { name: 'productId', type: dynamodb.AttributeType.STRING },
   sortKey: { name: 'category', type: dynamodb.AttributeType.STRING },
 });
+
+// Create binding configuration
+const bindingConfig = new TableBindingConfig(
+  'chaim-examples-java',  // appId
+  ChaimCredentials.fromApiKeys(
+    process.env.CHAIM_API_KEY || 'demo-api-key',
+    process.env.CHAIM_API_SECRET || 'demo-api-secret'
+  ),
+  FailureMode.BEST_EFFORT  // Optional, defaults to BEST_EFFORT
+);
 
 // Bind schema to table
 new ChaimDynamoDBBinder(this, 'ProductSchema', {
   schemaPath: path.join(__dirname, '../schemas/product-catalog.bprint'),
   table: productTable,
-  appId: 'chaim-examples-java',
-  credentials: ChaimCredentials.fromApiKeys(
-    process.env.CHAIM_API_KEY || 'dev-key',
-    process.env.CHAIM_API_SECRET || 'dev-secret'
-  ),
-  failureMode: FailureMode.BEST_EFFORT,
+  config: bindingConfig,  // Use config object
 });
 ```
 
 **Key points:**
 - Table keys MUST match schema's `primaryKey` field names
+- **TableBindingConfig** groups appId, credentials, and failureMode together
 - `ChaimDynamoDBBinder` writes LOCAL snapshot during `cdk synth`
 - `FailureMode.BEST_EFFORT` allows deployment even if SaaS publish fails
 
@@ -250,9 +271,9 @@ chaim generate \
 1. CLI discovers snapshot from OS cache
 2. Parses schema and DynamoDB metadata
 3. Invokes `chaim-client-java` to generate:
-   - `Products.java` — Entity DTO with DynamoDB annotations
-   - `ProductsKeys.java` — Key constants
-   - `ProductsRepository.java` — CRUD operations
+   - `Product.java` — Entity DTO with DynamoDB annotations
+   - `ProductKeys.java` — Key constants
+   - `ProductRepository.java` — CRUD operations
    - `ChaimDynamoDbClient.java` — DI-friendly client
    - `ChaimConfig.java` — Configuration with factory methods
 
@@ -267,30 +288,31 @@ mvn package
 
 ```java
 // java-applications/product-demo/src/main/java/com/acme/demo/ProductCatalogDemo.java
-import com.acme.products.Products;
+import com.acme.products.Product;
 import com.acme.products.config.ChaimConfig;
-import com.acme.products.repository.ProductsRepository;
+import com.acme.products.repository.ProductRepository;
 
 public class ProductCatalogDemo {
     public static void main(String[] args) {
         // Get repository from generated config
-        ProductsRepository repository = ChaimConfig.productsRepository();
+        ProductRepository repository = ChaimConfig.productRepository();
 
         // Create entity
-        Products product = new Products();
-        product.setProductId("PROD-001");
-        product.setCategory("Electronics");
-        product.setName("Smart Speaker");
-        product.setPrice(149.99);
-        product.setStockQuantity(100.0);
-        product.setIsActive(true);
-        product.setCreatedAt(Instant.now());
+        Product product = Product.builder()
+            .productId("PROD-001")
+            .category("Electronics")
+            .name("Smart Speaker")
+            .price(149.99)
+            .stockQuantity(100.0)
+            .isActive(true)
+            .createdAt(Instant.now())
+            .build();
 
         // Save to DynamoDB
         repository.save(product);
 
         // Find by composite key
-        Optional<Products> found = repository.findByKey("PROD-001", "Electronics");
+        Optional<Product> found = repository.findByKey("PROD-001", "Electronics");
     }
 }
 ```
@@ -376,7 +398,7 @@ mvn compile
 @NoArgsConstructor       // Lombok: default constructor (required by DynamoDB)
 @AllArgsConstructor      // Lombok: all-args constructor
 @DynamoDbBean            // AWS SDK: marks as DynamoDB entity
-public class Products {
+public class Product {
     private String productId;
     private String category;
     // ... other fields
@@ -392,17 +414,17 @@ public class Products {
 ### Repository Pattern
 
 ```java
-public class ProductsRepository {
-    private final DynamoDbTable<Products> table;
+public class ProductRepository {
+    private final DynamoDbTable<Product> table;
 
     // Constructor for ChaimDynamoDbClient
-    public ProductsRepository(ChaimDynamoDbClient client) { ... }
+    public ProductRepository(ChaimDynamoDbClient client) { ... }
 
     // Constructor for testing/DI
-    public ProductsRepository(DynamoDbEnhancedClient client, String tableName) { ... }
+    public ProductRepository(DynamoDbEnhancedClient client, String tableName) { ... }
 
-    public void save(Products entity) { ... }
-    public Optional<Products> findByKey(String productId, String category) { ... }
+    public void save(Product entity) { ... }
+    public Optional<Product> findByKey(String productId, String category) { ... }
     public void deleteByKey(String productId, String category) { ... }
 }
 ```
@@ -412,7 +434,7 @@ public class ProductsRepository {
 ```java
 public class ChaimConfig {
     // Baked-in metadata from CDK synth
-    public static final String TABLE_NAME = "product-catalog";
+    public static final String TABLE_NAME = "acme-product-catalog";
     public static final String TABLE_ARN = "arn:aws:dynamodb:...";
     public static final String REGION = "us-east-1";
 
@@ -420,8 +442,8 @@ public class ChaimConfig {
     public static ChaimDynamoDbClient getClient() { ... }
 
     // Repository factory methods
-    public static ProductsRepository productsRepository() { ... }
-    public static ProductsRepository productsRepository(ChaimDynamoDbClient client) { ... }
+    public static ProductRepository productRepository() { ... }
+    public static ProductRepository productRepository(ChaimDynamoDbClient client) { ... }
 }
 ```
 

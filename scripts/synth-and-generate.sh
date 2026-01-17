@@ -31,7 +31,8 @@ NC='\033[0m' # No Color
 # Configuration (can be overridden via arguments)
 STACK_NAME="${1:-ProductCatalogStack}"
 PACKAGE_NAME="${2:-com.acme.products}"
-OUTPUT_DIR="./generated-sdks/${STACK_NAME,,}-sdk"  # lowercase stack name
+STACK_NAME_LOWER=$(echo "$STACK_NAME" | tr '[:upper:]' '[:lower:]')
+OUTPUT_DIR="./generated-sdks/${STACK_NAME_LOWER}-sdk"
 
 echo ""
 echo -e "${CYAN}╔══════════════════════════════════════════════════════════════════╗${NC}"
@@ -173,7 +174,7 @@ TEMPLATE_PATH="./templates/sdk-pom.xml.template"
 
 # Extract group ID from package name (everything except last part)
 GROUP_ID=$(echo "$PACKAGE_NAME" | sed 's/\.[^.]*$//')
-ARTIFACT_ID="${STACK_NAME,,}-sdk"  # lowercase
+ARTIFACT_ID="${STACK_NAME_LOWER}-sdk"
 
 if [ -f "$TEMPLATE_PATH" ]; then
     echo "Generating pom.xml from template..."

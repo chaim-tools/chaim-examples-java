@@ -22,6 +22,7 @@ import * as cdk from 'aws-cdk-lib';
 
 // Import stack definitions
 import { ProductCatalogStack } from './product-catalog-stack';
+import { SingleTableExampleStack } from './single-table-example';
 
 const app = new cdk.App();
 
@@ -41,6 +42,26 @@ new ProductCatalogStack(app, 'ProductCatalogStack', {
     region: process.env.CDK_DEFAULT_REGION,
   },
   description: 'Chaim Example: Product Catalog with DynamoDB + Generated Java SDK',
+  // Optional: Use Secrets Manager for production deployments
+  // chaimSecretName: 'chaim/api-credentials',
+});
+
+// =====================================================
+// SingleTableExampleStack - Multi-Entity Pattern
+// =====================================================
+// 
+// Demonstrates single-table design with multiple entities:
+// - One DynamoDB table with PK/SK keys
+// - Multiple entities (Customer, Product, Order, OrderItem)
+// - Shared TableBindingConfig ensures consistency
+// - Separate ChaimDynamoDBBinder per entity
+//
+new SingleTableExampleStack(app, 'SingleTableExampleStack', {
+  env: {
+    account: process.env.CDK_DEFAULT_ACCOUNT,
+    region: process.env.CDK_DEFAULT_REGION,
+  },
+  description: 'Chaim Example: Single-table design with multiple entities',
   // Optional: Use Secrets Manager for production deployments
   // chaimSecretName: 'chaim/api-credentials',
 });

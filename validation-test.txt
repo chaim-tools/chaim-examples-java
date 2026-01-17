@@ -1,0 +1,153 @@
+# Validation Test Results for chaim-cli with bprint-spec v0.2.0
+
+## Test Execution Summary
+
+### Phase 1: Dependencies Updated ✓
+- chaim-cli: Updated to bprint-spec v0.2.0 (workspace protocol)
+- chaim-client-java: Updated to bprint-spec v0.2.0 (workspace protocol)
+- Both packages added to pnpm workspace
+- All dependencies installed successfully
+
+### Phase 2: Package Builds ✓
+- chaim-client-java: Built successfully (Gradle)
+- chaim-client-java tests: All tests passed
+- chaim-cli: Built successfully (TypeScript)
+- chaim-cli tests: All 55 tests passed
+
+### Phase 3: Test Schemas Created ✓
+Created two test schemas showcasing the flattened bprint-spec v0.2.0 structure:
+
+1. **user-with-constraints.bprint**
+   - Entity: UserAccount
+   - Features: Field-level constraints (minLength, maxLength, pattern, min, max)
+   - Keys: pk (partition), sk (sort) for single-table design
+   - Fields with constraints: email, username, age, bio
+
+2. **product-with-annotations.bprint**
+   - Entity: Product
+   - Features: Field-level constraints AND custom annotations
+   - Keys: pk (partition), sk (sort) for single-table design
+   - Annotations: currency, precision, displayFormat, unit, trackInventory
+   - Fields with constraints: price, name, description, stockQuantity, weight, sku
+
+Both schemas validated successfully using the bprint-spec validator.
+
+### Phase 4: CDK Synthesis ✓
+- Updated consumer-cdk-app stack to bind new test schemas
+- Built TypeScript sources
+- Successfully synthesized CDK app
+- LOCAL snapshots created in ~/.chaim/cache/snapshots/
+
+Snapshot files created:
+- token__UserAccount.json (with constraints)
+- token__Product.json (with annotations and constraints)
+- token__User.json
+- token__Order.json
+
+### Phase 5: Code Generation ✓
+Generated Java SDK from snapshots using chaim CLI:
+- Command: `chaim generate --package co.chaim.test.model --stack ChaimConsumerStack`
+- Result: 4 entities generated successfully across 3 tables
+
+Generated files:
+- UserAccount.java - Entity DTO with Lombok and DynamoDB annotations
+- Product.java - Entity DTO with Lombok and DynamoDB annotations
+- User.java - Entity DTO
+- Order.java - Entity DTO
+- UserAccountKeys.java - Key helper class
+- ProductKeys.java - Key helper class
+- UserKeys.java - Key helper class
+- OrderKeys.java - Key helper class
+- UserAccountRepository.java - Repository with CRUD operations
+- ProductRepository.java - Repository with CRUD operations
+- UserRepository.java - Repository
+- OrderRepository.java - Repository
+- ChaimDynamoDbClient.java - Shared DynamoDB client wrapper
+- ChaimConfig.java - Configuration with factory methods
+
+### Phase 6: Generated Code Analysis
+
+#### Structure Validation ✓
+All generated Java files follow the expected structure:
+- Proper package declaration (co.chaim.test.model)
+- Lombok annotations (@Data, @Builder, @NoArgsConstructor, @AllArgsConstructor)
+- DynamoDB annotations (@DynamoDbBean, @DynamoDbPartitionKey, @DynamoDbSortKey)
+- Correct field types (String, Double, Boolean, Instant)
+- Explicit getters for partition and sort keys
+
+#### Constraint Metadata ⚠️
+**Current State**: Constraints from .bprint schemas are NOT preserved in generated Java code
+- No JSR-380 validation annotations (@Size, @Min, @Max, @Pattern)
+- No JavaDoc comments documenting constraints
+- No runtime validation enforcement
+
+This is expected behavior - the JavaGenerator currently focuses on data structure and DynamoDB mapping, not validation rules.
+
+**Example**: UserAccount.email field
+- Schema has: minLength: 5, maxLength: 254, pattern: "^[^@]+@[^@]+\\.[^@]+$"
+- Generated: `private String email;` (no validation metadata)
+
+#### Custom Annotations ⚠️
+**Current State**: Custom annotations are NOT preserved in generated Java code
+- No custom metadata exposed
+- No annotation classes generated
+- No accessor methods for annotation values
+
+**Example**: Product.price field
+- Schema has annotations: currency: "USD", precision: 2, displayFormat: "currency"
+- Generated: `private Double price;` (no annotation metadata)
+
+## Compatibility Verification
+
+### Schema Structure ✓
+The flattened bprint-spec v0.2.0 structure is fully compatible:
+- Top-level `entityName`, `primaryKey`, `fields` are correctly parsed
+- Java BprintSchema.java model matches TypeScript types
+- Field-level `constraints` and `annotations` deserialize successfully
+
+### Backward Compatibility ⚠️
+- Old snapshots with nested `entity` structure fail to parse
+- Workaround: Delete old snapshots and re-synthesize
+
+### End-to-End Workflow ✓
+Complete workflow validated:
+1. Define schema with constraints/annotations (.bprint)
+2. Validate schema (bprint-spec validator)
+3. Bind to DynamoDB table (CDK ChaimBinder)
+4. Synthesize CDK (creates LOCAL snapshot)
+5. Generate Java SDK (chaim CLI)
+6. Use generated DTOs and repositories
+
+## Recommendations for Production
+
+1. **Constraint Enforcement**: Enhance JavaGenerator to emit JSR-380 validation annotations
+   - Add @Size for string length constraints
+   - Add @Min/@Max for numeric constraints
+   - Add @Pattern for regex validation
+   - Add @NotNull for required fields
+
+2. **Annotation Preservation**: Add custom annotation support
+   - Generate annotation metadata classes
+   - Provide accessors for annotation values
+   - Consider Jackson @JsonProperty for serialization hints
+
+3. **Documentation**: Add JavaDoc with constraint/annotation information
+   - Document validation rules in field comments
+   - Include examples of valid values
+   - Reference original .bprint schema
+
+## Success Criteria Status
+
+✅ All dependencies updated to bprint-spec v0.2.0
+✅ chaim-client-java builds and tests pass
+✅ chaim-cli builds and tests pass
+✅ New test schemas are valid and synth correctly
+✅ `chaim generate` produces working Java SDK code
+⚠️ Generated code compiles but doesn't include constraint metadata (enhancement needed)
+✅ No linter errors or warnings
+
+## Conclusion
+
+The chaim-cli successfully validates and works with the new flattened bprint-spec v0.2.0 structure. The entire end-to-end workflow from schema definition to Java SDK generation is functional. While constraints and annotations are not currently exposed in the generated code, this is an identified enhancement opportunity rather than a blocker.
+
+The system is production-ready for basic DTO and repository generation. Constraint validation would require additional work in the JavaGenerator to emit JSR-380 annotations.

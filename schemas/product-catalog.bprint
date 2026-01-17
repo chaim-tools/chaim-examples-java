@@ -1,91 +1,88 @@
 {
   "schemaVersion": 1.0,
-  "namespace": "acme.ecommerce.products",
+  "entityName": "Product",
   "description": "Product catalog for ACME E-Commerce platform. Demonstrates Chaim's complete workflow from schema definition to generated Java SDK.",
-  "entity": {
-    "name": "Product",
-    "primaryKey": {
-      "partitionKey": "productId",
-      "sortKey": "category"
-    },
-    "fields": [
-      {
-        "name": "productId",
-        "type": "string",
-        "required": true,
-        "description": "Unique product identifier (UUID format)",
-        "constraints": {
-          "minLength": 8,
-          "maxLength": 64
-        }
-      },
-      {
-        "name": "category",
-        "type": "string",
-        "required": true,
-        "description": "Product category for organization and querying",
-        "constraints": {
-          "minLength": 1,
-          "maxLength": 100
-        }
-      },
-      {
-        "name": "name",
-        "type": "string",
-        "required": true,
-        "description": "Human-readable product name",
-        "constraints": {
-          "minLength": 1,
-          "maxLength": 255
-        }
-      },
-      {
-        "name": "description",
-        "type": "string",
-        "required": false,
-        "description": "Detailed product description",
-        "constraints": {
-          "maxLength": 2000
-        }
-      },
-      {
-        "name": "price",
-        "type": "number",
-        "required": true,
-        "description": "Product price in USD",
-        "constraints": {
-          "min": 0
-        }
-      },
-      {
-        "name": "stockQuantity",
-        "type": "number",
-        "required": true,
-        "description": "Current inventory count",
-        "default": 0,
-        "constraints": {
-          "min": 0
-        }
-      },
-      {
-        "name": "isActive",
-        "type": "boolean",
-        "required": false,
-        "description": "Whether the product is available for purchase",
-        "default": true
-      },
-      {
-        "name": "createdAt",
-        "type": "timestamp",
-        "required": true,
-        "description": "When the product was added to catalog"
-      },
-      {
-        "name": "updatedAt",
-        "type": "timestamp",
-        "required": false,
-        "description": "Last modification timestamp"
+  "primaryKey": {
+    "partitionKey": "productId",
+    "sortKey": "category"
+  },
+  "fields": [
+    {
+      "name": "productId",
+      "type": "string",
+      "required": true,
+      "description": "Unique product identifier (UUID format)",
+      "constraints": {
+        "minLength": 8,
+        "maxLength": 64
       }
-    ]
-  }
+    },
+    {
+      "name": "category",
+      "type": "string",
+      "required": true,
+      "description": "Product category for organization and querying",
+      "constraints": {
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": true,
+      "description": "Human-readable product name",
+      "constraints": {
+        "minLength": 1,
+        "maxLength": 255
+      }
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "required": false,
+      "description": "Detailed product description",
+      "constraints": {
+        "maxLength": 2000
+      }
+    },
+    {
+      "name": "price",
+      "type": "number",
+      "required": true,
+      "description": "Product price in USD",
+      "constraints": {
+        "min": 0
+      }
+    },
+    {
+      "name": "stockQuantity",
+      "type": "number",
+      "required": true,
+      "description": "Current inventory count",
+      "default": 0,
+      "constraints": {
+        "min": 0
+      }
+    },
+    {
+      "name": "isActive",
+      "type": "boolean",
+      "required": false,
+      "description": "Whether the product is available for purchase",
+      "default": true
+    },
+    {
+      "name": "createdAt",
+      "type": "timestamp",
+      "required": true,
+      "description": "When the product was added to catalog"
+    },
+    {
+      "name": "updatedAt",
+      "type": "timestamp",
+      "required": false,
+      "description": "Last modification timestamp"
+    }
+  ]
 }

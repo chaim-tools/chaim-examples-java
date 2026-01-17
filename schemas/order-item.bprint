@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1.0,
+  "entityName": "OrderItem",
+  "description": "OrderItem entity for single-table design demonstration",
+  "primaryKey": {
+    "partitionKey": "PK",
+    "sortKey": "SK"
+  },
+  "fields": [
+    {
+      "name": "PK",
+      "type": "string",
+      "required": true,
+      "description": "Partition key: ORDER#{orderId}"
+    },
+    {
+      "name": "SK",
+      "type": "string",
+      "required": true,
+      "description": "Sort key: ITEM#{itemId}"
+    },
+    {
+      "name": "orderId",
+      "type": "string",
+      "required": true,
+      "description": "Order this item belongs to"
+    },
+    {
+      "name": "itemId",
+      "type": "string",
+      "required": true,
+      "description": "Unique item identifier within the order"
+    },
+    {
+      "name": "productId",
+      "type": "string",
+      "required": true,
+      "description": "Product identifier"
+    },
+    {
+      "name": "quantity",
+      "type": "number",
+      "required": true,
+      "description": "Quantity ordered",
+      "constraints": {
+        "min": 1
+      }
+    },
+    {
+      "name": "unitPrice",
+      "type": "number",
+      "required": true,
+      "description": "Price per unit at time of order",
+      "constraints": {
+        "min": 0
+      }
+    },
+    {
+      "name": "subtotal",
+      "type": "number",
+      "required": true,
+      "description": "Subtotal: quantity * unitPrice",
+      "constraints": {
+        "min": 0
+      }
+    }
+  ]
+}

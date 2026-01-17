@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1.0,
+  "entityName": "Order",
+  "description": "Order entity for single-table design demonstration",
+  "primaryKey": {
+    "partitionKey": "PK",
+    "sortKey": "SK"
+  },
+  "fields": [
+    {
+      "name": "PK",
+      "type": "string",
+      "required": true,
+      "description": "Partition key: ORDER#{orderId}"
+    },
+    {
+      "name": "SK",
+      "type": "string",
+      "required": true,
+      "description": "Sort key: METADATA or ITEM#{itemId}"
+    },
+    {
+      "name": "orderId",
+      "type": "string",
+      "required": true,
+      "description": "Unique order identifier"
+    },
+    {
+      "name": "customerId",
+      "type": "string",
+      "required": true,
+      "description": "Customer who placed the order"
+    },
+    {
+      "name": "totalAmount",
+      "type": "number",
+      "required": true,
+      "description": "Order total in USD",
+      "constraints": {
+        "min": 0
+      }
+    },
+    {
+      "name": "status",
+      "type": "string",
+      "required": true,
+      "description": "Order status: pending, confirmed, shipped, delivered, cancelled"
+    },
+    {
+      "name": "createdAt",
+      "type": "timestamp",
+      "required": true,
+      "description": "Order creation timestamp"
+    },
+    {
+      "name": "updatedAt",
+      "type": "timestamp",
+      "required": false,
+      "description": "Last modification timestamp"
+    }
+  ]
+}

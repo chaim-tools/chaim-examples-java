@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "entityName": "Product",
+  "description": "Product entity for single-table design demonstration",
+  "primaryKey": {
+    "partitionKey": "PK",
+    "sortKey": "SK"
+  },
+  "fields": [
+    {
+      "name": "PK",
+      "type": "string",
+      "required": true,
+      "description": "Partition key: PRODUCT#{productId}"
+    },
+    {
+      "name": "SK",
+      "type": "string",
+      "required": true,
+      "description": "Sort key: PRODUCT#{productId}"
+    },
+    {
+      "name": "productId",
+      "type": "string",
+      "required": true,
+      "description": "Unique product identifier"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": true,
+      "description": "Product name"
+    },
+    {
+      "name": "category",
+      "type": "string",
+      "required": true,
+      "description": "Product category"
+    },
+    {
+      "name": "price",
+      "type": "number",
+      "required": true,
+      "description": "Product price in USD"
+    },
+    {
+      "name": "stockQuantity",
+      "type": "number",
+      "required": true,
+      "default": 0,
+      "description": "Current inventory count"
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "required": false,
+      "description": "Product description"
+    },
+    {
+      "name": "imageUrl",
+      "type": "string",
+      "required": false,
+      "description": "Product image URL"
+    },
+    {
+      "name": "createdAt",
+      "type": "string",
+      "required": true,
+      "description": "ISO 8601 timestamp"
+    },
+    {
+      "name": "updatedAt",
+      "type": "string",
+      "required": true,
+      "description": "ISO 8601 timestamp"
+    }
+  ]
+}

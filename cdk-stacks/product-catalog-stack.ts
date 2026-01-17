@@ -27,7 +27,7 @@ import * as path from 'path';
 import {
   ChaimDynamoDBBinder,
   ChaimCredentials,
-  FailureMode,
+  TableBindingConfig,
 } from '@chaim-tools/cdk-lib';
 
 export interface ProductCatalogStackProps extends cdk.StackProps {
@@ -92,25 +92,23 @@ export class ProductCatalogStack extends cdk.Stack {
     //
     const schemaPath = path.join(__dirname, '../schemas/product-catalog.bprint');
 
-    // Determine credentials strategy
-    // Option 1: Use Secrets Manager (recommended for production)
-    // Option 2: Use environment variables (for development)
-    const credentials = props?.chaimSecretName
-      ? ChaimCredentials.fromSecretsManager(props.chaimSecretName)
-      : ChaimCredentials.fromApiKeys(
-          process.env.CHAIM_API_KEY || 'dev-api-key',
-          process.env.CHAIM_API_SECRET || 'dev-api-secret'
-        );
+    // Create binding configuration
+    // - Determines credentials strategy (Secrets Manager vs direct API keys)
+    // - For single-table design with multiple entities, create once and share
+    const bindingConfig = new TableBindingConfig(
+      'chaim-examples-java',
+      props?.chaimSecretName
+        ? ChaimCredentials.fromSecretsManager(props.chaimSecretName)
+        : ChaimCredentials.fromApiKeys(
+            process.env.CHAIM_API_KEY || 'demo-api-key',
+            process.env.CHAIM_API_SECRET || 'demo-api-secret'
+          )
+    );
 
-    // Note: Using 'as any' to avoid type conflicts from pnpm's isolated constructs versions
     new ChaimDynamoDBBinder(this as any, 'ProductSchema', {
       schemaPath,
       table: this.productTable as any,
-      appId: 'chaim-examples-java',
-      credentials,
-      // BEST_EFFORT: Continues deploy even if Chaim ingestion fails
-      // STRICT: Rolls back deploy if Chaim ingestion fails
-      failureMode: FailureMode.BEST_EFFORT,
+      config: bindingConfig,
     });
 
     // =====================================================
